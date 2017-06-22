@@ -1,0 +1,65 @@
+<ServerManagerConfiguration>
+
+  <ProxyGroup name="internal_sources">
+    <SourceProxy name="wrfreader" class="WRFReader" label="wrfreader">
+		<StringVectorProperty
+			  name="FileName"
+			  animateable="0"
+			  command="SetFileName"
+			  number_of_elements="1">
+		  <FileListDomain name="files"/>
+		</StringVectorProperty>
+		<Hints>
+			<ReaderFactory extensions="wrf" file_description="WRF File Format" />
+		</Hints>
+	</SourceProxy>
+  </ProxyGroup>
+
+  <ProxyGroup name="sources">
+	<SourceProxy name="WRFReader"
+	  class="vtkFileSeriesReader"
+	  si_class="vtkSIMetaReaderProxy"
+	  label="WRF Reader"
+	  file_name_method="SetFileName">
+
+	  <Documentation short_help="Read WRF data" long_help="WRF data">
+	  	Foo
+	  </Documentation>
+
+	  <SubProxy>
+		<Proxy name="Reader" proxygroup="internal_sources" proxyname="wrfreader"></Proxy>
+	  </SubProxy>
+
+	  <StringVectorProperty name="FileNameInfo" command="GetCurrentFileName" information_only="1" >
+		<SimpleStringInformationHelper />
+	  </StringVectorProperty>
+
+	  <StringVectorProperty
+		name="FileNames"
+		clean_command="RemoveAllFileNames"
+		command="AddFileName"
+		animateable="0"
+		number_of_elements="0" 
+		repeat_command="1">
+		<FileListDomain name="files"/>
+
+		<Documentation>
+		  The list of files to be read by the reader. If more than 1 file is specified, 
+		  the reader will switch to file series mode in which it will pretend that it 
+		  can support time and provide 1 file per time step.
+		</Documentation>
+	  </StringVectorProperty>
+
+	  <DoubleVectorProperty name="TimestepValues" repeatable="1" information_only="1">
+		<TimeStepsInformationHelper/>
+		<Documentation>
+		  Available timestep values.
+		</Documentation>
+	  </DoubleVectorProperty>
+
+	  <Hints>
+		<ReaderFactory extensions="wrf" file_description="WRF files" />
+	  </Hints>
+	</SourceProxy>
+  </ProxyGroup>
+</ServerManagerConfiguration>
