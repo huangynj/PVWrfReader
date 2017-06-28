@@ -19,9 +19,10 @@ FIND_PACKAGE(GDAL REQUIRED)
 INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR})
 # Find the Netcdf packages
 # I am going to grab the FindNetCDF.cmake module
-# from VTK for this. The module is in CMake dir
+# from jed brown for this. The module is in CMake dir
+SET(NETCDF_CXX "YES")
 FIND_PACKAGE(NetCDF REQUIRED)
-INCLUDE_DIRECTORIES(${NETCDF_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${NETCDF_INCLUDES})
 # Find the PROJ stuff. Going to use
 # Find_path and find_library here cause there
 # is no module for PROJ that I know of.
