@@ -398,7 +398,7 @@ int WRFReader::RequestData(vtkInformation* request,
         // !strcmp(name, "U") || !strcmp(name, "V") || !strcmp(name, "W") ||
         // !strcmp(name, "PH") || !strcmp(name, "PHB");
 
-        int selected = !strcmp(name, "REFL_10CM") || !strcmp(name, "QRAIN");
+        int selected = !strcmp(name, "QSNOW") || !strcmp(name, "QRAIN") || !strcmp(name,"QCLOUD") || !strcmp(name, "QVAPOR") || !strcmp(name,"QICE") || !strcmp(name,"QGRAUP");
 
         // fprintf(stderr, "name: %s selected: %d\n", name, selected);
 
