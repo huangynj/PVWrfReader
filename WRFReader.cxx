@@ -309,25 +309,48 @@ int WRFReader::RequestData(vtkInformation* request,
         lon[i] = (float)X_buf[i];
     }
 
-    int utm = (lon[0] - (-180)) / 6;
 
     char buf[256];
+    OGRSpatialReference oUTM, *oLL;
+    /* original utm transformation
+     * old busted
     sprintf(buf, "UTM %d (WGS84)", utm);
     // std::cerr << "using " << buf << "\n";
 
-    OGRSpatialReference oUTM, *oLL;
+    int utm = (lon[0] - (-180)) / 6;
     oUTM.SetProjCS(buf);
     oUTM.SetWellKnownGeogCS( "WGS84" );
     oUTM.SetUTM(utm, TRUE);
 
     oLL = oUTM.CloneGeogCS();
+    */
+    /* new lcc projection
+     * new hotness */
+    double stdp1,stdp2,cenlat,cenlon,easting,northing;
+    stdp1 = 33.0;
+    stdp2 = 45.0;
+    cenlat = 40.0;
+    cenlon = -97.0;
+    easting = 0.0;
+    northing = 0.0;
+    sprintf(buf, " LCC (WGS84)");
+    oUTM.SetProjCS(buf);
+    oUTM.SetWellKnownGeogCS( "WGS84" );
+    oUTM.SetLCC(stdp1,stdp2,cenlat,cenlon,easting,northing);
+    oLL = oUTM.CloneGeogCS();
+    char *pszWKT = NULL;
+    oUTM.exportToWkt(&pszWKT);
+    printf("%s\n",pszWKT);
+    
     OGRCoordinateTransformation *proj = OGRCreateCoordinateTransformation(oLL,  &oUTM);
 
     // dbg();
+    printf(" project some stuff\n");
 
     proj->Transform((int)(count[1] * count[2]), X_buf, Y_buf);
     delete proj;
 
+    printf(" done projecting\n");
     vtkPoints *points = vtkPoints::New();
     points->SetNumberOfPoints(count[0] * count[1] * count[2]);
 
@@ -398,7 +421,7 @@ int WRFReader::RequestData(vtkInformation* request,
         // !strcmp(name, "U") || !strcmp(name, "V") || !strcmp(name, "W") ||
         // !strcmp(name, "PH") || !strcmp(name, "PHB");
 
-        int selected = !strcmp(name, "QSNOW") || !strcmp(name, "QRAIN") || !strcmp(name,"QCLOUD") || !strcmp(name, "QVAPOR") || !strcmp(name,"QICE") || !strcmp(name,"QGRAUP");
+        int selected = !strcmp(name, "QSNOW") || !strcmp(name, "QRAIN") || !strcmp(name,"QCLOUD") || !strcmp(name, "QVAPOR") || !strcmp(name,"QICE") || !strcmp(name,"QGRAUP") || !strcmp(name,"P") || !strcmp(name,"PB") ;
 
         // fprintf(stderr, "name: %s selected: %d\n", name, selected);
 
